@@ -18,9 +18,23 @@ const apiKey = process.env.TWILIO_API_KEY;
 const apiSecret = process.env.TWILIO_API_SECRET;
 const twimlAppSid = process.env.TWILIO_APP_SID;
 const twilioPhoneNumber = process.env.TWILIO_CALLER_ID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = twilio(accountSid, authToken);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
+});
+
+app.get("/accountBalance", async (req, res) => {
+  try {
+    const data = await client.balance.fetch();
+    const balance = Math.round(data.balance * 100) / 100;
+    const currency = data.currency;
+    res.send({ balance, currency });
+  } catch (error) {
+    console.error("Error fetching balance:", error);
+    res.status(500).send({ error: "Error fetching balance" });
+  }
 });
 
 app.get("/token", (req, res) => {

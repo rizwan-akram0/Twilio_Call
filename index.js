@@ -19,6 +19,10 @@ const apiSecret = process.env.TWILIO_API_SECRET;
 const twimlAppSid = process.env.TWILIO_APP_SID;
 const twilioPhoneNumber = process.env.TWILIO_CALLER_ID;
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 app.get("/token", (req, res) => {
   const identity = twilioPhoneNumber;
 

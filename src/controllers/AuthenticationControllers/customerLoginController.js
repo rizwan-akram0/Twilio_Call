@@ -40,7 +40,7 @@ module.exports = {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: "6m",
+          expiresIn: "1y",
         }
       );
 
@@ -54,7 +54,7 @@ module.exports = {
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-          expiresIn: "1y",
+          expiresIn: "2y",
         }
       );
 
@@ -126,7 +126,7 @@ module.exports = {
           },
           process.env.ACCESS_TOKEN_SECRET,
           {
-            expiresIn: "6m",
+            expiresIn: "1y",
           }
         );
         return res.status(200).json({

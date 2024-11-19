@@ -16,6 +16,15 @@ router.post(
   "/forgotPassword",
   customerForgotPassswordController.forgotPassword
 );
+router.post(
+  "/resendEmailVerification",
+  customerRegisterController.resendEmailVerificationOTP
+);
+router.post("/verifyEmail", customerRegisterController.verifyEmail);
+router.post(
+  "/changePassword",
+  customerForgotPassswordController.changePassword
+);
 router.post("/resetPassword", customerForgotPassswordController.resetPassword);
 router.post("/resendOTP", customerForgotPassswordController.resendOTP);
 router.post("/verifyOTP", customerForgotPassswordController.verifyOTP);

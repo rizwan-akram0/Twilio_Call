@@ -61,6 +61,10 @@ const customerSchema = new Schema(
       type: String,
       required: false,
     },
+    callSid: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

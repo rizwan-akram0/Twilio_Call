@@ -57,9 +57,14 @@ const customerSchema = new Schema(
       type: Number,
       default: 0,
     },
+    availableMinutes: {
+      type: Number,
+      default: 3,
+    },
     registeredNumber: {
       type: String,
       required: false,
+      unique: true,
     },
     callSid: {
       type: String,

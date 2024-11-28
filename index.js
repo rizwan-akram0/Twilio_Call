@@ -10,6 +10,7 @@ const authenticateJWT = require("./src/middlewares/authenticateJWT");
 const dotenv = require("dotenv");
 const callRoutes = require("./src/routes/callRoutes/callRoutes");
 const customerAuthenticationRoutes = require("./src/routes/AuthenticationRoutes/customerAuthenticationRoutes");
+const paymentRoutes = require("./src/routes/paymentRoutes");
 
 const app = express();
 app.use(cookieParser());
@@ -21,9 +22,14 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // Add this to support form-encoded data
 app.use(multer().none());
+
+app.get("/api/", (req, res) => {
+  res.send("Hello World!");
+});
 
 dotenv.config();
 
@@ -34,7 +40,7 @@ app.use((req, res, next) => {
 
 app.use("/api/customer", customerAuthenticationRoutes);
 app.use("/api/call", callRoutes);
-
+app.use("/api/payments", paymentRoutes);
 
 const IP = process.env.IP || "localhost";
 const PORT = process.env.PORT || 3000;

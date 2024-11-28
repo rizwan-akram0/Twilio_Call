@@ -12,6 +12,61 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
 module.exports = {
+  getAvailableMinutes: async (req, res) => {
+    try {
+      const customerInfo = req.auth;
+      const customer = await Customer.findById(customerInfo.id);
+      res.send({ availableMinutes: customer.availableMinutes });
+    } catch (error) {
+      console.error("Error fetching available minutes:", error);
+      res.status(500).send({ error: "Error fetching available minutes" });
+    }
+  },
+
+  updateAvailableMinutes: async (req, res) => {
+    try {
+      const customerInfo = req.auth;
+      const { minutes } = req.body;
+      // Validate minutes input
+      if (isNaN(minutes)) {
+        return res.status(400).send({ error: "Invalid minutes value" });
+      }
+
+      const customer = await Customer.findById(customerInfo.id);
+      if (!customer) {
+        return res.status(404).send({ error: "Customer not found" });
+      }
+
+      // Ensure customer has enough minutes
+      const currentMinutes = parseInt(customer.availableMinutes) || 0;
+      const minutesToDeduct = parseInt(minutes);
+
+      if (currentMinutes < minutesToDeduct) {
+        return res.status(400).send({
+          error: "Insufficient available minutes",
+          availableMinutes: currentMinutes,
+        });
+      }
+
+      const availableMinutes = currentMinutes - 1;
+      if (availableMinutes == minutes) {
+        customer.availableMinutes = availableMinutes;
+      } else if (availableMinutes > minutes) {
+        customer.availableMinutes = currentMinutes - 1;
+      } else if (availableMinutes < minutes) {
+        customer.availableMinutes = currentMinutes + 1;
+      }
+      await customer.save();
+
+      res.send({
+        availableMinutes: customer.availableMinutes,
+        minutesDeducted: minutesToDeduct,
+      });
+    } catch (error) {
+      console.error("Error updating available minutes:", error);
+      res.status(500).send({ error: "Error updating available minutes" });
+    }
+  },
   getAccountBalance: async (req, res) => {
     try {
       const customerInfo = req.auth;
@@ -115,6 +170,11 @@ module.exports = {
 
     if (!phoneNumber) {
       return res.status(400).send({ error: "Phone number is required" });
+    }
+
+    const phone = await Customer.findOne({ registeredNumber: phoneNumber });
+    if (phone) {
+      return res.status(400).send({ error: "Phone number already registered" });
     }
 
     // Ensure the customer exists

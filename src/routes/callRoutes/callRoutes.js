@@ -22,6 +22,15 @@ router.post(
   "/webhooks/twilio/verifyCallback",
   callControllers.handleTwilioCallback
 );
-
+router.get(
+  "/availableMinutes",
+  authenticateJWT,
+  callControllers.getAvailableMinutes
+);
+router.post(
+  "/updateAvailableMinutes",
+  authenticateJWT,
+  callControllers.updateAvailableMinutes
+);
 
 module.exports = router;

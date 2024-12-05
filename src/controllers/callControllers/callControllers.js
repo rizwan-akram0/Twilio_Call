@@ -75,10 +75,32 @@ module.exports = {
       if (!customer) {
         return res.status(404).send({ error: "Customer not found" });
       }
+
       const data = await client.balance.fetch();
       const balance = Math.round(data.balance * 100) / 100;
+
+      // Get all customers with available minutes
+      const customersWithMinutes = await Customer.find({
+        availableMinutes: { $gt: 0 },
+      });
+
+      // Extract minutes array and calculate total
+      const minutesArray = customersWithMinutes.map(
+        (item) => item.availableMinutes
+      );
+      const totalMinutes = minutesArray.reduce(
+        (sum, minutes) => sum + minutes,
+        0
+      );
+
+      const final = balance - totalMinutes * 3;
+      console.log(final);
+
       const currency = data.currency;
-      res.send({ balance, currency });
+      res.send({
+        balance: final,
+        currency,
+      });
     } catch (error) {
       console.error("Error fetching balance:", error);
       res.status(500).send({ error: "Error fetching balance" });

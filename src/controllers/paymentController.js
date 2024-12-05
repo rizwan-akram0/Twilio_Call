@@ -13,7 +13,7 @@ const createPaymentIntent = async (req, res) => {
       });
     }
 
-    const amount = minutesToAdd * 0.5;
+    const amount = minutesToAdd * 0.1;
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100),

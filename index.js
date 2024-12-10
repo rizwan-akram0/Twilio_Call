@@ -52,7 +52,7 @@ const credentials = { key: privateKey, cert: certificate };
 
 const IP = process.env.IP || "localhost";
 const HTTP_PORT = process.env.PORT || 3000;
-const HTTPS_PORT = process.env.HTTPS_PORT || 8443;
+const HTTPS_PORT = process.env.HTTPS_PORT || 443;
 
 // Start HTTP server
 app.listen(HTTP_PORT, IP, () => {

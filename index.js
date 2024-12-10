@@ -46,9 +46,8 @@ app.use("/api/call", callRoutes);
 app.use("/api/payments", paymentRoutes);
 
 // Load SSL Certificates
-const privateKey = fs.readFileSync("private.key", "utf8");
-const certificate = fs.readFileSync("certificate.crt", "utf8");
-
+const privateKey = fs.readFileSync("/home/ec2-user/openssl-1.1.1v/private.key", "utf8");
+const certificate = fs.readFileSync("/home/ec2-user/openssl-1.1.1v/certificate.crt", "utf8");
 const credentials = { key: privateKey, cert: certificate };
 
 const IP = process.env.IP || "localhost";

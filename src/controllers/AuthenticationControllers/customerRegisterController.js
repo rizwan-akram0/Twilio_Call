@@ -276,6 +276,23 @@ module.exports = {
       return res
         .status(200)
         .json({ status: "success", message: "Email verified successfully" });
-    } catch (error) {}
+    } catch (error) { }
   },
+
+  deleteCustomer: async (req, res) => {
+    try {
+      const customerInfo = req.auth;
+
+      const customer = await Customer.findByIdAndDelete(customerInfo.id);
+      if (!customer) {
+        return res.status(404).send({ error: "Customer not found" });
+      }
+
+      res.send({ message: "Customer deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      res.status(500).send({ error: "Error deleting customer" });
+    }
+  }
+
 };

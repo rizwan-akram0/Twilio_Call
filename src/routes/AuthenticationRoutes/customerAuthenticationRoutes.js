@@ -28,6 +28,7 @@ router.post(
 router.post("/resetPassword", customerForgotPassswordController.resetPassword);
 router.post("/resendOTP", customerForgotPassswordController.resendOTP);
 router.post("/verifyOTP", customerForgotPassswordController.verifyOTP);
-router.post("logout", authenticateJWT, customerLoginController.logout);
+router.post("/logout", authenticateJWT, customerLoginController.logout);
+router.delete("/deleteAccount", authenticateJWT, customerRegisterController.deleteCustomer);
 
 module.exports = router;

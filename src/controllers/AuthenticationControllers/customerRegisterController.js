@@ -283,7 +283,7 @@ module.exports = {
     try {
       const customerInfo = req.auth;
 
-      if (customerInfo.role !== "customer") {
+      if (!customerInfo) {
         return res.status(200).send({ error: "You are not authorized to delete this account" });
       }
 

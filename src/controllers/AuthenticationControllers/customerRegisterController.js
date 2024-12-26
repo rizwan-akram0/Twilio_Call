@@ -283,6 +283,10 @@ module.exports = {
     try {
       const customerInfo = req.auth;
 
+      if (customerInfo.role !== "customer") {
+        return res.status(200).send({ error: "You are not authorized to delete this account" });
+      }
+
       const customer = await Customer.findByIdAndDelete(customerInfo.id);
       if (!customer) {
         return res.status(404).send({ error: "Customer not found" });

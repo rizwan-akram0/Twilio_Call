@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const Customer = require("../../models/customerModel/customerModel");
 const nodemailer = require("nodemailer");
 const CustomerEmailVerification = require("../../models/customerModel/customerEmailVerification");
+const jwt = require("jsonwebtoken");
 
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000)
@@ -281,13 +282,14 @@ module.exports = {
 
   deleteCustomer: async (req, res) => {
     try {
-      const customerInfo = req.auth;
-
-      if (!customerInfo) {
-        return res.status(200).send({ error: "You are not authorized to delete this account" });
+      const token = req?.headers?.authorization?.split(" ")[1];
+      if (!token) {
+        return res.status(200).send({ error: "Unauthorized" });
       }
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      const customerId = decoded.id;
 
-      const customer = await Customer.findByIdAndDelete(customerInfo.id);
+      const customer = await Customer.findByIdAndDelete(customerId);
       if (!customer) {
         return res.status(404).send({ error: "Customer not found" });
       }

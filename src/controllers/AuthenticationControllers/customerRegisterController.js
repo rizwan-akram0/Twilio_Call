@@ -62,14 +62,16 @@ module.exports = {
       );
 
       let final = balance - totalMinutes * 3;
-      console.log(final);
 
       let newCustomer = null;
 
+
       if (!customer?.isActive) {
-        customer.password = hash;
-        customer.salt = salt;
-        await customer.save();
+        const updateCustomer = await Customer.findOneAndUpdate(
+          {name: name},
+          { password: hash },
+          { salt: salt },
+        );
       }
       else if (final <= 0) {
         newCustomer = new Customer({

@@ -67,6 +67,9 @@ module.exports = {
       let newCustomer = null;
 
       if (!customer?.isActive) {
+        customer.password = hash;
+        customer.salt = salt;
+        await customer.save();
       }
       else if (final <= 0) {
         newCustomer = new Customer({

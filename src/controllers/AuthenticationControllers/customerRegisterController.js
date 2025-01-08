@@ -67,10 +67,9 @@ module.exports = {
 
 
       if (!customer?.isActive) {
-        const updateCustomer = await Customer.findOneAndUpdate(
+        await Customer.findOneAndUpdate(
           {name: name},
-          { password: hash },
-          { salt: salt },
+          { password: hash, salt: salt }
         );
       }
       else if (final <= 0) {

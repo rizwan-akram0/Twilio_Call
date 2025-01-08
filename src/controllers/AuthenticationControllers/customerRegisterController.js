@@ -1,3 +1,4 @@
+const twilio = require("twilio");
 const bcrypt = require("bcryptjs");
 const Customer = require("../../models/customerModel/customerModel");
 const nodemailer = require("nodemailer");
@@ -9,6 +10,10 @@ const generateOTP = () => {
     .toString()
     .padStart(6, "0");
 };
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = twilio(accountSid, authToken);
 
 module.exports = {
   register: async (req, res) => {
@@ -22,6 +27,7 @@ module.exports = {
 
       const customer = await Customer.findOne({
         email: email,
+        isActive: true,
       });
       if (customer) {
         return res
@@ -38,22 +44,67 @@ module.exports = {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(salt + password, 10);
 
-      const newCustomer = new Customer({
-        name,
-        email,
-        password: hash,
-        salt,
+
+      const data = await client.balance.fetch();
+      const balance = Math.round(data.balance * 100) / 100;
+
+      const customersWithMinutes = await Customer.find({
+        availableMinutes: { $gt: 0 },
       });
 
-      await newCustomer.save();
+      // Extract minutes array and calculate total
+      const minutesArray = customersWithMinutes.map(
+        (item) => item.availableMinutes
+      );
+      const totalMinutes = minutesArray.reduce(
+        (sum, minutes) => sum + minutes,
+        0
+      );
+
+      let final = balance - totalMinutes * 3;
+      console.log(final);
+
+      let newCustomer = null;
+
+      if (!customer?.isActive) {
+      }
+      else if (final <= 0) {
+        newCustomer = new Customer({
+          name,
+          email,
+          password: hash,
+          availableMinutes: 0,
+          salt,
+        });
+      } else {
+        newCustomer = new Customer({
+          name,
+          email,
+          password: hash,
+          salt,
+        });
+      }
+
+      if (newCustomer !== null) {
+        await newCustomer.save();
+      }
       const otp = generateOTP();
 
-      const emailVerification = new CustomerEmailVerification({
-        email: email,
-        otp: otp,
-      });
+      const verification = await CustomerEmailVerification.findOne(
+        { email: email }
+      )
 
-      await emailVerification.save();
+      if (verification) {
+        verification.otp = otp;
+        await verification.save();
+      }
+      else {
+        const emailVerification = new CustomerEmailVerification({
+          email: email,
+          otp: otp,
+        });
+        await emailVerification.save();
+      }
 
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -131,11 +182,18 @@ module.exports = {
 
       await CustomerEmailVerification.findOneAndDelete({ email: email });
 
-      await Customer.findOneAndUpdate(
-        { email: email },
-        { isVerified: true },
-        { new: true }
-      );
+      const customer = Customer.findOne({ email: email })
+
+      if (!customer?.isActive) {
+        customer.isActive = true;
+        customer.save();
+      } else {
+        await Customer.findOneAndUpdate(
+          { email: email },
+          { isVerified: true },
+          { new: true }
+        );
+      }
 
       return res
         .status(200)
@@ -268,11 +326,16 @@ module.exports = {
 
       await CustomerEmailVerification.findOneAndDelete({ email: email });
 
-      await Customer.findOneAndUpdate(
-        { email: email },
-        { isVerified: true },
-        { new: true }
-      );
+      if (!customer?.isActive) {
+        customer.isActive = true;
+        customer.save();
+      } else {
+        await Customer.findOneAndUpdate(
+          { email: email },
+          { isVerified: true },
+          { new: true }
+        );
+      }
 
       return res
         .status(200)
@@ -289,10 +352,15 @@ module.exports = {
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       const customerId = decoded.id;
 
-      const customer = await Customer.findByIdAndDelete(customerId);
+      const customer = await Customer.findById(customerId);
+
       if (!customer) {
         return res.status(404).send({ error: "Customer not found" });
       }
+      const setInactive = await Customer.findByIdAndUpdate(customerId, {
+        isActive: false,
+      });
+      setInactive.save();
 
       res.send({ message: "Customer deleted successfully" });
     } catch (error) {

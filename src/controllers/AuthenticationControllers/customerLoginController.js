@@ -13,6 +13,7 @@ module.exports = {
 
       const customer = await Customer.findOne({
         email: email,
+        isActive: true,
       });
       if (!customer) {
         return res

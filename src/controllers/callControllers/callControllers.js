@@ -93,8 +93,10 @@ module.exports = {
         0
       );
 
-      const final = balance - totalMinutes * 3;
-      console.log(final);
+      let final = balance - totalMinutes * 3;
+      if(final <= 0 && balance > 0){
+        final = 1;
+      }
 
       const currency = data.currency;
       res.send({

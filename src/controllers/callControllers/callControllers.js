@@ -16,7 +16,7 @@ module.exports = {
     try {
       const customerInfo = req.auth;
       const customer = await Customer.findById(customerInfo.id);
-      res.send({ availableMinutes: customer.availableMinutes });
+      res.send({ availableMinutes: customer?.availableMinutes });
     } catch (error) {
       console.error("Error fetching available minutes:", error);
       res.status(500).send({ error: "Error fetching available minutes" });
@@ -280,4 +280,34 @@ module.exports = {
       res.status(500).send({ error: "Error checking verification status" });
     }
   },
+  updateMinutesAndBalance: async (req,res)=>{
+    try {
+      const {
+        minutes,balance, email
+      } = req.query;
+
+      if(!minutes || !balance || !email){
+        return res.status(400).send({error:"Provide all fields"});
+      }
+
+      const customer = await Customer.findOne({email});
+      if (!customer) {
+        return res.status(404).send({ error: "Customer not found" });
+      }
+
+      customer.availableMinutes = minutes;
+      customer.balance = balance;
+
+      await customer.save();
+
+      res.send({
+        availableMinutes: customer.availableMinutes,
+        balance: customer.balance
+      });
+      
+    } catch (error) {
+      console.error("Error changing balance:", error);
+      res.status(500).send({ error: "Error changing balance" });
+    }
+  }
 };

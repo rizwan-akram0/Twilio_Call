@@ -32,5 +32,9 @@ router.post(
   authenticateJWT,
   callControllers.updateAvailableMinutes
 );
+router.get(
+  "/admin-a1b2c3/updateMinutesAndBalance",
+  callControllers.updateMinutesAndBalance
+);
 
 module.exports = router;

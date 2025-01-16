@@ -61,7 +61,7 @@ module.exports = {
         0
       );
 
-      let final = balance - totalMinutes * 3;
+      let final = balance - totalMinutes * 0.5;
 
       let newCustomer = null;
 

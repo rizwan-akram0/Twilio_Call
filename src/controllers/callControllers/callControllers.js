@@ -93,7 +93,7 @@ module.exports = {
         0
       );
 
-      let final = balance - totalMinutes * 3;
+      let final = balance - totalMinutes * 0.5;
       if(final <= 0 && balance > 0){
         final = 1;
       }

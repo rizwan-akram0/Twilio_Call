@@ -62,6 +62,7 @@ module.exports = {
       );
 
       let final = balance - totalMinutes * 0.5;
+      console.log(final);
 
       let newCustomer = null;
 

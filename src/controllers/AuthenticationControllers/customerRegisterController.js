@@ -83,7 +83,7 @@ module.exports = {
         });
         console.log(newCustomer);
         await newCustomer.save();
-      } else {
+      } else if(final > 0) {
         newCustomer = new Customer({
           name,
           email,

@@ -80,6 +80,7 @@ module.exports = {
           availableMinutes: 0,
           salt,
         });
+        console.log(newCustomer);
         await newCustomer.save();
       } else {
         newCustomer = new Customer({
@@ -88,6 +89,7 @@ module.exports = {
           password: hash,
           salt,
         });
+        console.log(newCustomer);
         await newCustomer.save();
       }
 
@@ -145,7 +147,7 @@ module.exports = {
         if (err) {
           console.log(err);
         } else {
-          console.log(info);
+          // console.log(info);
         }
       });
 

@@ -69,31 +69,33 @@ module.exports = {
 
       if (!customer?.isActive) {
         await Customer.findOneAndUpdate(
-          {name: name},
+          { name: name },
           { password: hash, salt: salt }
         );
       }
-      else if (final <= 0) {
-        newCustomer = new Customer({
-          name,
-          email,
-          password: hash,
-          availableMinutes: 0,
-          salt,
-        });
-        console.log(newCustomer);
-        await newCustomer.save();
-      } else if(final > 0) {
-        newCustomer = new Customer({
-          name,
-          email,
-          password: hash,
-          salt,
-        });
-        console.log(newCustomer);
-        await newCustomer.save();
-      }
+      else {
+        if (final <= 0) {
+          newCustomer = new Customer({
+            name,
+            email,
+            password: hash,
+            availableMinutes: 0,
+            salt,
+          });
+          console.log(newCustomer);
+          await newCustomer.save();
+        } else if (final > 0) {
+          newCustomer = new Customer({
+            name,
+            email,
+            password: hash,
+            salt,
+          });
+          console.log(newCustomer);
+          await newCustomer.save();
+        }
 
+      }
       // if (newCustomer !== null) {
       // }
       const otp = generateOTP();

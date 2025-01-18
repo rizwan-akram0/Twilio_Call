@@ -62,12 +62,11 @@ module.exports = {
       );
 
       let final = balance - totalMinutes * 0.5;
-      console.log(final);
 
       let newCustomer = null;
 
 
-      if (!customer?.isActive) {
+      if (customer && !customer?.isActive) {
         await Customer.findOneAndUpdate(
           { name: name },
           { password: hash, salt: salt }
@@ -82,7 +81,6 @@ module.exports = {
             availableMinutes: 0,
             salt,
           });
-          console.log(newCustomer);
           await newCustomer.save();
         } else if (final > 0) {
           newCustomer = new Customer({
@@ -91,13 +89,10 @@ module.exports = {
             password: hash,
             salt,
           });
-          console.log(newCustomer);
           await newCustomer.save();
         }
 
       }
-      // if (newCustomer !== null) {
-      // }
       const otp = generateOTP();
 
       const verification = await CustomerEmailVerification.findOne(

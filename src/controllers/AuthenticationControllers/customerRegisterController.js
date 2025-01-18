@@ -80,6 +80,7 @@ module.exports = {
           availableMinutes: 0,
           salt,
         });
+        await newCustomer.save();
       } else {
         newCustomer = new Customer({
           name,
@@ -87,11 +88,11 @@ module.exports = {
           password: hash,
           salt,
         });
-      }
-
-      if (newCustomer !== null) {
         await newCustomer.save();
       }
+
+      // if (newCustomer !== null) {
+      // }
       const otp = generateOTP();
 
       const verification = await CustomerEmailVerification.findOne(

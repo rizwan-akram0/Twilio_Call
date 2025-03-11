@@ -63,10 +63,7 @@ const customerSchema = new Schema(
     },
     registeredNumber: {
       type: String,
-      required: false,
-      unique: true,
       sparse: true,
-      efault: undefined,
     },
     callSid: {
       type: String,

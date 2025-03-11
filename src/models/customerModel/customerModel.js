@@ -65,12 +65,13 @@ const customerSchema = new Schema(
       type: String,
       required: false,
       unique: true,
+      sparse: true,
     },
     callSid: {
       type: String,
       required: false,
     },
-    isActive:{
+    isActive: {
       type: Boolean,
       default: true,
     }

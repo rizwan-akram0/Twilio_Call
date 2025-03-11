@@ -81,6 +81,9 @@ module.exports = {
             availableMinutes: 0,
             salt,
           });
+          if (newCustomer?.registeredNumber === null) {
+            delete newCustomer.registeredNumber;
+          }
           await newCustomer.save();
         } else if (final > 0) {
           newCustomer = new Customer({
@@ -89,6 +92,9 @@ module.exports = {
             password: hash,
             salt,
           });
+          if (newCustomer?.registeredNumber === null) {
+            delete newCustomer.registeredNumber;
+          }
           await newCustomer.save();
         }
 

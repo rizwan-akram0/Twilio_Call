@@ -66,6 +66,7 @@ const customerSchema = new Schema(
       required: false,
       unique: true,
       sparse: true,
+      efault: undefined,
     },
     callSid: {
       type: String,
